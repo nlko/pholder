@@ -1,0 +1,14 @@
+This is a test
+//$ myclass.mytemplate.decl
+This is a test
+
+ /*$ myclass.mytemplate2 */
+ test
+/*$*/
+
+     /*$ myclass.mytemplate2.trim.decl */
+ test
+	 /*$*/
+
+  //$ myclass.mytemplate3.decl
+     //$ myclass2.mytemplate3.decl

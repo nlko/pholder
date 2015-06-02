@@ -1,0 +1,7 @@
+{
+    "dependencies": {
+        "line-reader": "latest",
+        "optimist": "latest",
+        "underscore": "latest"
+    }
+}

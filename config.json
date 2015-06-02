@@ -1,0 +1,18 @@
+{
+	"config":{
+	  "special_char":"$",
+	  "placeholder_short":"//",
+	  "placeholder_long1":"/*",
+	  "placeholder_long2":" */",
+	  "tagfile":"tag.coffee",
+	  "connector":"db.coffee"
+	},
+	"myclass":{
+		"mytemplate":"TEMPLATE 1",
+		"mytemplate2":"TEMPLATE 2",
+		"mytemplate3":["Line1","Line2"]
+	},
+	"myclass2":{
+		"mytemplate3":["Line1","Line2","Line3"]	
+	}
+}
