@@ -49,15 +49,15 @@ config =
   placeholder_long2:' */'
   connector:local_json_connector
 
-if(json?hasOwnProperty "config")
-  _.extend config,json["config"]
+if(json?.config?)
+  _.extend config,json.config
 
 if _.isString config.connector
   config.connector = require(prepare_filename config.connector)
 
 tags = {}
 
-if config?.tagfile
+if config?.tagfile?
   tags = require(prepare_filename config.tagfile)
 
 short_start=config.placeholder_short+config.special_char
