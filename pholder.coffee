@@ -1,4 +1,4 @@
-#!/usr/local/bin/coffee
+#!/usr/bin/coffee
 
 process.on 'uncaughtException', (err) ->
   console.log('Caught exception: ')
