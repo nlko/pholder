@@ -136,7 +136,14 @@ parse_a_file = (file_to_process)->
 
     finalise_file = (buffer) ->
       fs.writeFile file_to_process+".tmp", buffer, (err)->
-        console.log err if err? 
+        if err?
+          console.log "Failed to write", (file_to_process+".tmp")       
+          console.log err
+        else
+          fs.rename file_to_process+".tmp", file_to_process, (err)->
+            if err?
+              console.log "Failed to renae", (file_to_process+".tmp") , "to " , file_to_process
+              console.log err 
         #fs.renameSync('a.txt','b.txt');
 
     if mode is 0
