@@ -163,7 +163,7 @@ parse_a_file = (file_to_process)->
     if (last)
       config.connector.close_db() if config.connector?init_db
       if (mode is 1)
-        console.log "$ERROR line "+line_counter+": File endding unexpectedly (missing closing tag)."
+        console.log "$ERROR in "+file_to_process+":"+line_counter+": File endding unexpectedly (missing closing tag)."
       else
         finalise_file output_buffer
 
