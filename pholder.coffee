@@ -92,7 +92,7 @@ parse_a_file = (file_to_process)->
     output_buffer+="\n" unless output_buffer is ""
     output_buffer+=str
 
-  lineReader.eachLine "file.txt", (original_line, last) ->
+  lineReader.eachLine file_to_process, (original_line, last) ->
     line_counter++
 
     spaces = extract_spaces original_line
