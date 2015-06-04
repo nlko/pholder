@@ -103,7 +103,7 @@ parse_a_file = (file_to_process)->
       code=""
       config.connector.read_db config,group,template,(err,data)->
         if err?
-          console.log "$ERROR line "+line_counter+": "+err
+          console.log "$ERROR in "+file_to_process+":"+line_counter+": "+err
         else
           if _.isArray(data)
             data.forEach (elem)->
@@ -118,7 +118,7 @@ parse_a_file = (file_to_process)->
               if tags.hasOwnProperty tag
                 code= (tags[tag](code))
               else
-                console.log "$ERROR line "+line_counter+": tag function("+tag+") not found."
+                console.log "$ERROR in "+file_to_process+":"+line_counter+": tag function("+tag+") not found."
               code
 
             code = tags_list.reduce  reduce_func,code
@@ -133,6 +133,8 @@ parse_a_file = (file_to_process)->
       group = tags_list.shift()
       template = tags_list.shift()
       write_template template_str, spaces, group, template, tags_list
+      else
+        console.log "$ERROR in "+file_to_process+":"+line_counter+": Don't understand template "+template_str
 
     finalise_file = (buffer) ->
       fs.writeFile file_to_process+".tmp", buffer, (err)->
