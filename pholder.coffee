@@ -103,7 +103,7 @@ extract_spaces = (str) ->
 String.prototype.startsWith = (prefix) ->
     @indexOf(prefix) is 0;
 
-create_long_start = (template) -> long_start+template+long_start_end
+create_long_start = (template) -> long_start+" "+template.trim()+long_start_end
 
 
 parse_a_file = (file_to_process)->
