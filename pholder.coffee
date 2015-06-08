@@ -18,8 +18,6 @@ argv = require 'optimist'
 fs = require('fs')
 path = require('path')
 
-lineReader = require('line-reader')
-
 _ = require('underscore')
 
 prepare_filename_for_options = (filename) ->
@@ -114,7 +112,7 @@ parse_a_file = (file_to_process)->
 
   output_buffer=""
 
-  lineReader.eachLine file_to_process, (original_line, last) ->
+  fs.readFileSync(file_to_process).toString().split('\n').forEach (original_line)->
 
     add_to_output = (str) ->
       output_buffer+="\n" if 1<line_counter
@@ -160,18 +158,6 @@ parse_a_file = (file_to_process)->
       else
         console.log "$ERROR in "+file_to_process+":"+line_counter+": Don't understand template "+template_str
 
-    finalise_file = (buffer) ->
-      fs.writeFile file_to_process+".tmp", buffer, (err)->
-        if err?
-          console.log "Failed to write", (file_to_process+".tmp")       
-          console.log err
-        else
-          fs.rename file_to_process+".tmp", file_to_process, (err)->
-            if err?
-              console.log "Failed to renae", (file_to_process+".tmp") , "to " , file_to_process
-              console.log err 
-        #fs.renameSync('a.txt','b.txt');
-
     if mode is 0
       if line.startsWith short_start
         process_found_template (line.substring (short_start.length))
@@ -184,11 +170,22 @@ parse_a_file = (file_to_process)->
       if line.startsWith long_start
         mode = 0
 
-    if (last)
-      config.connector.close_db() if config.connector?init_db
-      if (mode is 1)
-        console.log "$ERROR in "+file_to_process+":"+line_counter+": File endding unexpectedly (missing closing tag)."
+  finalise_file = (buffer) ->
+    fs.writeFile file_to_process+".tmp", buffer, (err)->
+      if err?
+        console.log "Failed to write", (file_to_process+".tmp")       
+        console.log err
       else
-        finalise_file output_buffer
+        fs.rename file_to_process+".tmp", file_to_process, (err)->
+          if err?
+            console.log "Failed to rename", (file_to_process+".tmp") , "to " , file_to_process
+            console.log err 
+
+  if (mode is 1)
+    console.log "$ERROR in "+file_to_process+":"+line_counter+": File endding unexpectedly (missing closing tag)."
+  else
+    finalise_file output_buffer
 
 argv._.forEach parse_a_file
+
+config.connector.close_db() if config.connector?init_db
