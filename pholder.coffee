@@ -177,8 +177,8 @@ parse_a_file = (file_to_process)->
       else if line.startsWith long_start
         process_found_template (line.substring (long_start.length),(line.length-2))
         mode = 1
-      else
-        add_to_output line
+      else        
+        add_to_output original_line        
     else
       if line.startsWith long_start
         mode = 0
