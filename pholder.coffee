@@ -114,11 +114,12 @@ parse_a_file = (file_to_process)->
 
   output_buffer=""
 
-  add_to_output = (str) -> 
-    output_buffer+="\n" unless output_buffer is ""
-    output_buffer+=str
-
   lineReader.eachLine file_to_process, (original_line, last) ->
+
+    add_to_output = (str) ->
+      output_buffer+="\n" if 1<line_counter
+      output_buffer+=str
+
     line_counter++
 
     spaces = extract_spaces original_line
