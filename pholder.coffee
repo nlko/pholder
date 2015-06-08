@@ -4,6 +4,8 @@ process.on 'uncaughtException', (err) ->
   console.log('Caught exception: ')
   console.dir err
 
+empty = ""
+
 argv = require 'optimist'
       .usage 'Usage : $0 [--conf config.json] [--data datafile.json] file1 file2…'
       .alias 'c','conf'
@@ -42,7 +44,7 @@ stringify = (data,spaces)->
   if _.isArray(data)
     code=""
     data.forEach (elem)->
-      if(code isnt "")
+      if(code isnt empty)
         code+="\n"
       code+=spaces+elem
     code
