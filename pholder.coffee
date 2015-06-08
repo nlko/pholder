@@ -14,21 +14,27 @@ argv = require 'optimist'
       .argv
 
 fs = require('fs')
+path = require('path')
 
 lineReader = require('line-reader')
 
 _ = require('underscore')
 
+prepare_filename_for_options = (filename) ->
+  path.resolve filename
+
 prepare_filename = (filename) ->
-  if filename.length and filename.charAt(0) isnt "/" and filename.charAt(0) isnt "."
-    filename="./"+filename
-  filename
+  path.resolve config_dir,filename
+
 
 if argv.conf?
-  json = require(prepare_filename argv.conf)
+  json = require(prepare_filename_for_options argv.conf)
+  config_dir = path.dirname(path.resolve argv.conf)
+else
+  config_dir = path.dirname(process.cwd())
 
 if argv.data?
-  data = require(prepare_filename argv.data)
+  data = require(prepare_filename_for_options argv.data)
 else
   data = json
 
