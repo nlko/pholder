@@ -110,12 +110,15 @@ parse_a_file = (file_to_process)->
   
   line_counter=0
 
+  first_outputed_line = true
+
   output_buffer=""
 
   fs.readFileSync(file_to_process).toString().split('\n').forEach (original_line)->
 
     add_to_output = (str) ->
-      output_buffer+="\n" if 1<line_counter
+      output_buffer+="\n" if !first_outputed_line
+      first_outputed_line = false
       output_buffer+=str
 
     line_counter++
