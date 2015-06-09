@@ -149,9 +149,10 @@ parse_a_file = (file_to_process)->
             console.log "$ERROR in "+file_to_process+":"+line_counter+": "+err
           else 
             if tags_list? and _.isArray(tags_list)
+              original_code = code
               reduce_func=(code, tag)->
                 if tags.hasOwnProperty tag
-                  code= (tags[tag](code))
+                  code= (tags[tag](code,path_list,original_code))
                 else
                   console.log "$ERROR in "+file_to_process+":"+line_counter+": tag function("+tag+") not found."
                 code
