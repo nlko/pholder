@@ -137,10 +137,11 @@ parse_a_file = (file_to_process)->
     line = original_line.trim()
 
     write_template = (template_str, spaces, path_list, tags_list) ->
+      write_place_holder = (str) -> add_to_output str if !config.remove_place_holders? or !config.remove_place_holders
       if isCleanRequested
-        add_to_output (spaces + create_short_start template_str)
+        write_place_holder (spaces + create_short_start template_str)
       else
-        add_to_output (spaces + create_long_start template_str)
+        write_place_holder (spaces + create_long_start template_str)
         config.connector.read_db config,{spaces:spaces},path_list, (err,code)->        
           if err?
             console.log "$ERROR in "+file_to_process+":"+line_counter+": "+err
@@ -158,7 +159,7 @@ parse_a_file = (file_to_process)->
             add_to_output code
 
 
-        add_to_output (spaces + create_long_start "")
+        write_place_holder (spaces + create_long_start "")
 
     process_found_template = (template_str)->
       path_list = template_str.trim().split("@")
