@@ -31,8 +31,6 @@ prepare_filename_for_options = (filename) ->
 prepare_filename = (filename) ->
   path.resolve config_dir,filename
 
-isCleanRequested = argv.clean?
-
 if argv.conf?
   json = require(prepare_filename_for_options argv.conf)
   config_dir = path.dirname(path.resolve argv.conf)
@@ -81,6 +79,8 @@ config =
 
 if(json?.config?)
   _.extend config,json.config
+
+isCleanRequested = argv.clean? or (config.clean? and config.clean)
 
 isPrintRequested = argv.print? or (config.print? and config.print)
 
