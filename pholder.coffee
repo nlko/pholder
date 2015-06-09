@@ -7,12 +7,13 @@ process.on 'uncaughtException', (err) ->
 empty = ""
 
 argv = require 'optimist'
-      .usage 'Usage : $0 [--conf config.json] [--data datafile.json] [--clean] [--verbose] file1 file2…'
+      .usage 'Usage : $0 [--conf config.json] [--data datafile.json] [--clean] [--verbose] [--print] file1 file2…'
       .alias 'c','conf'
       .alias 'd','data'
       .describe 'c','Configuration file'
       .describe 'd','A Json datafile to act as a db. (db can be contained in the config file)'
       .describe 'clean','Remove placeholder values from files (leave empty placeholder).'      
+      .describe 'print','Print result on the console'     
       .describe 'verbose','Verbose mode' 
       .check (argv)-> argv? and (argv?.c? or argv?.d?)
       .argv
@@ -80,6 +81,8 @@ config =
 
 if(json?.config?)
   _.extend config,json.config
+
+isPrintRequested = argv.print? or (config.print? and config.print)
 
 if _.isString config.connector
   config.connector = require(prepare_filename config.connector)
@@ -196,6 +199,8 @@ parse_a_file = (file_to_process)->
 
   if (mode is 1)
     console.log "$ERROR in "+file_to_process+":"+line_counter+": File endding unexpectedly (missing closing tag)."
+  else if isPrintRequested
+    console.log output_buffer
   else
     finalise_file output_buffer
 
