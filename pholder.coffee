@@ -7,12 +7,13 @@ process.on 'uncaughtException', (err) ->
 empty = ""
 
 argv = require 'optimist'
-      .usage 'Usage : $0 [--conf config.json] [--data datafile.json] [--clean] file1 file2…'
+      .usage 'Usage : $0 [--conf config.json] [--data datafile.json] [--clean] [--verbose] file1 file2…'
       .alias 'c','conf'
       .alias 'd','data'
       .describe 'c','Configuration file'
       .describe 'd','A Json datafile to act as a db. (db can be contained in the config file)'
       .describe 'clean','Remove placeholder values from files (leave empty placeholder).'      
+      .describe 'verbose','Verbose mode' 
       .check (argv)-> argv? and (argv?.c? or argv?.d?)
       .argv
 
@@ -20,6 +21,8 @@ fs = require('fs')
 path = require('path')
 
 _ = require('underscore')
+
+verbose=(str) -> console.log str if argv.verbose
 
 prepare_filename_for_options = (filename) ->
   path.resolve filename
@@ -108,6 +111,7 @@ create_long_start = (template) -> long_start+" "+template.trim()+long_start_end
 
 
 parse_a_file = (file_to_process)->
+  verbose "processing #{file_to_process}"
 
   mode=0
   
