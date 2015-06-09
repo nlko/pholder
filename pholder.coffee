@@ -39,6 +39,8 @@ else
 
 if argv.data?
   data = require(prepare_filename_for_options argv.data)
+else if json.config?.data_file?
+  data = require(prepare_filename_for_options json.config.data_file)
 else
   data = json
 
