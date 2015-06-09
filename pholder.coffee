@@ -7,11 +7,12 @@ process.on 'uncaughtException', (err) ->
 empty = ""
 
 argv = require 'optimist'
-      .usage 'Usage : $0 [--conf config.json] [--data datafile.json] file1 file2…'
+      .usage 'Usage : $0 [--conf config.json] [--data datafile.json] [--clean] file1 file2…'
       .alias 'c','conf'
       .alias 'd','data'
       .describe 'c','Configuration file'
       .describe 'd','A Json datafile to act as a db. (db can be contained in the config file)'
+      .describe 'clean','Remove placeholder values from files (leave empty placeholder).'      
       .check (argv)-> argv? and (argv?.c? or argv?.d?)
       .argv
 
@@ -26,6 +27,7 @@ prepare_filename_for_options = (filename) ->
 prepare_filename = (filename) ->
   path.resolve config_dir,filename
 
+isCleanRequested = argv.clean?
 
 if argv.conf?
   json = require(prepare_filename_for_options argv.conf)
@@ -101,6 +103,7 @@ extract_spaces = (str) ->
 String.prototype.startsWith = (prefix) ->
     @indexOf(prefix) is 0;
 
+create_short_start = (template) -> short_start+" "+template.trim()
 create_long_start = (template) -> long_start+" "+template.trim()+long_start_end
 
 
@@ -127,25 +130,28 @@ parse_a_file = (file_to_process)->
     line = original_line.trim()
 
     write_template = (template_str, spaces, path_list, tags_list) ->
-      add_to_output (spaces + create_long_start template_str)
-      config.connector.read_db config,{spaces:spaces},path_list, (err,code)->        
-        if err?
-          console.log "$ERROR in "+file_to_process+":"+line_counter+": "+err
-        else 
-          if tags_list? and _.isArray(tags_list)
-            reduce_func=(code, tag)->
-              if tags.hasOwnProperty tag
-                code= (tags[tag](code))
-              else
-                console.log "$ERROR in "+file_to_process+":"+line_counter+": tag function("+tag+") not found."
-              code
+      if isCleanRequested
+        add_to_output (spaces + create_short_start template_str)
+      else
+        add_to_output (spaces + create_long_start template_str)
+        config.connector.read_db config,{spaces:spaces},path_list, (err,code)->        
+          if err?
+            console.log "$ERROR in "+file_to_process+":"+line_counter+": "+err
+          else 
+            if tags_list? and _.isArray(tags_list)
+              reduce_func=(code, tag)->
+                if tags.hasOwnProperty tag
+                  code= (tags[tag](code))
+                else
+                  console.log "$ERROR in "+file_to_process+":"+line_counter+": tag function("+tag+") not found."
+                code
 
-            code = tags_list.reduce  reduce_func,code
+              code = tags_list.reduce  reduce_func,code
 
-          add_to_output code
+            add_to_output code
 
 
-      add_to_output (spaces + create_long_start "")
+        add_to_output (spaces + create_long_start "")
 
     process_found_template = (template_str)->
       path_list = template_str.trim().split("@")
