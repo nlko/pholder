@@ -15,6 +15,7 @@ argv = require 'optimist'
       .describe 'clean','Remove placeholder values from files (leave empty placeholder).'      
       .describe 'print','Print result on the console'     
       .describe 'verbose','Verbose mode' 
+      .boolean ['clean','print','verbose']
       .check (argv)-> argv? and (argv?.c? or argv?.d?)
       .argv
 
@@ -82,9 +83,9 @@ config =
 if(json?.config?)
   _.extend config,json.config
 
-isCleanRequested = argv.clean? or (config.clean? and config.clean)
+isCleanRequested = argv.clean or config.clean?
 
-isPrintRequested = argv.print? or (config.print? and config.print)
+isPrintRequested = argv.print or config.print?
 
 if _.isString config.connector
   config.connector = require(prepare_filename config.connector)
