@@ -147,8 +147,8 @@ parse_a_file = (file_to_process)->
         config.connector.read_db config,{spaces:spaces},path_list, (err,code)->        
           if err?
             console.log "$ERROR in "+file_to_process+":"+line_counter+": "+err
-          else 
-            if tags_list? and _.isArray(tags_list)
+          else
+            if tags_list? and _.isArray(tags_list) and tags_list.length
               original_code = code
               reduce_func=(code, tag)->
                 if tags.hasOwnProperty tag
@@ -157,7 +157,7 @@ parse_a_file = (file_to_process)->
                   console.log "$ERROR in "+file_to_process+":"+line_counter+": tag function("+tag+") not found."
                 code
 
-              code = tags_list.reduce  reduce_func,code
+              code = tags_list.reduce  reduce_func,""
 
             add_to_output code
 
