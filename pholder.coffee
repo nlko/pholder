@@ -208,6 +208,15 @@ parse_a_file = (file_to_process)->
   else
     finalise_file output_buffer
 
-argv._.forEach parse_a_file
+files_to_process = 
+  if config.input_files?
+    (if _.isArray(config.input_files)
+      config.input_files
+    else
+      [config.input_files]).map (file) -> prepare_filename file
+  else
+    argv._
+
+files_to_process.forEach (file) ->  parse_a_file file
 
 config.connector.close_db() if config.connector?init_db
