@@ -79,6 +79,10 @@ config =
   placeholder_long1:'/*'
   placeholder_long2:' */'
   connector:local_json_connector
+  tag_indicator:'@'
+  tag_separator:'.'
+  path_separator:'/'
+
 
 if(json?.config?)
   _.extend config,json.config
@@ -127,21 +131,24 @@ parse_a_file = (file_to_process)->
 
   output_buffer=""
 
+  # for each line of the file
   fs.readFileSync(file_to_process).toString().split('\n').forEach (original_line)->
-
-    add_to_output = (str) ->
-      output_buffer+="\n" if !first_outputed_line
-      first_outputed_line = false
-      output_buffer+=str
 
     line_counter++
 
     spaces = extract_spaces original_line
     line = original_line.trim()
 
-    write_template = (template_str, spaces, path_list, tags_list) ->
-      write_place_holder = (str) -> add_to_output str if !config.remove_place_holders? or !config.remove_place_holders
-      if isCleanRequested
+    add_to_output = (str) ->
+      output_buffer+="\n" if !first_outputed_line
+      first_outputed_line = false
+      output_buffer+=str
+
+    write_template = (template_str, spaces, path_list, tags_list, flags) ->
+      #console.log line_counter
+      #console.dir flags
+      write_place_holder = (str) -> add_to_output str if (!config.remove_place_holders? or !config.remove_place_holders) and !flags.remove?
+      if isCleanRequested or flags.clean?
         write_place_holder (spaces + create_short_start template_str)
       else
         write_place_holder (spaces + create_long_start template_str)
@@ -165,20 +172,51 @@ parse_a_file = (file_to_process)->
 
         write_place_holder (spaces + create_long_start "")
 
+
+
     process_found_template = (template_str)->
-      path_list = template_str.trim().split("@")
+      # A temlate can be of the form this/is/a/path@and.a.list.of.tags
+      path_list = template_str.trim().split(config.tag_indicator)
       if path_list.length is 1
         tags_list=[]
       else
         tags_str = path_list.pop()
-        tags_list =tags_str.trim().split(".")
-      if path_list.length > 0
-        path_list = path_list[0].split("/")
+        tags_list =tags_str.trim().split(config.tag_separator)
 
-        write_template template_str, spaces, path_list, tags_list
+      if path_list.length > 0
+        path_part = path_list[0].trim()
+        flags = if path_part.startsWith '['
+          index_of_flag = path_part.indexOf ']'
+          if index_of_flag is -1
+            console.log "$ERROR in "+file_to_process+":"+line_counter+": missing ] in "+template_str
+            null
+          else
+            flags_element = path_part
+            path_part = path_part.substring(index_of_flag+1).trim()
+
+            flags_element.substring(1,index_of_flag).split(',').reduce( (previous,current) ->
+                index = current.indexOf '='
+                if index is -1
+                  previous[current.trim()] = true
+                else
+                  if index > 1
+                    previous[current.substring(0,index).trim()] = current.substring(index+1).trim()
+                  else
+                    console.log "$ERROR in "+file_to_process+":"+line_counter+": unexpected , in flags of "+template_str
+                previous
+            , {})
+        else
+          {}
+
+        if flags isnt null
+          path_list = path_part.split(config.path_separator)
+
+          write_template template_str, spaces, path_list, tags_list, flags
       else
         console.log "$ERROR in "+file_to_process+":"+line_counter+": Don't understand template "+template_str
 
+
+    # if outside a template block
     if mode is 0
       if line.startsWith short_start
         process_found_template (line.substring (short_start.length))
@@ -186,10 +224,14 @@ parse_a_file = (file_to_process)->
         process_found_template (line.substring (long_start.length),(line.length-2))
         mode = 1
       else        
-        add_to_output original_line        
+        add_to_output original_line
     else
+      #if inside a template block, skip all the line until the end of block mark 
       if line.startsWith long_start
         mode = 0
+  #### /end of for each line
+
+
 
   finalise_file = (buffer) ->
     fs.writeFile file_to_process+".tmp", buffer, (err)->
@@ -202,13 +244,17 @@ parse_a_file = (file_to_process)->
             console.log "Failed to rename", (file_to_process+".tmp") , "to " , file_to_process
             console.log err 
 
+
+
   if (mode is 1)
     console.log "$ERROR in "+file_to_process+":"+line_counter+": File endding unexpectedly (missing closing tag)."
   else if isPrintRequested
     console.log output_buffer
   else
     finalise_file output_buffer
+#### /parse_a_file
 
+# The list of files may be provided on the command line or from the configuration file
 files_to_process = 
   if config.input_files?
     (if _.isArray(config.input_files)
@@ -218,6 +264,7 @@ files_to_process =
   else
     argv._
 
+#for each files from the command line or from the configuration
 files_to_process.forEach (file) ->  parse_a_file file
 
 config.connector.close_db() if config.connector?init_db
