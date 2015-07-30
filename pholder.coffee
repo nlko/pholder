@@ -171,7 +171,7 @@ parse_a_file = (file_to_process)->
                   [code,new_db_object] = code if _.isArray(code)
                   db_object = new_db_object if new_db_object isnt undefined
                 else
-                  console.log "$ERROR in "+file_to_process+":"+line_counter+": tag function("+tag+") not found."
+                  console.log "ERROR in "+file_to_process+":"+line_counter+": tag function ("+tag_func+") not found."
                 code
 
               code = tags_list.reduce  reduce_func,""
