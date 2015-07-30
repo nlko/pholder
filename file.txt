@@ -1,6 +1,6 @@
 This is a test
 /*$ myclass/mytemplate@decl */
-TEMPLATE 1;
+;
 /*$  */
 This is a test
 
@@ -9,18 +9,14 @@ This is a test
  /*$  */
 
      /*$ myclass/mytemplate2@trim.decl */
-TEMPLATE 2;
+;
      /*$  */
 
   /*$ myclass/mytemplate3@decl */
-  Line1
-  Line2;
+;
   /*$  */
      /*$ myclass2/mytemplate3@decl */
-     Line1
-     Line2
-     Line3
-     Line4;
+;
      /*$  */
 
 
@@ -31,33 +27,31 @@ TEMPLATE 2;
 /*$  */
 
 /*$ socket/accept/signature@decl */
-int accept(int);
+;
 /*$  */
 
 
 1
-//$ [ remove, test] socket/accept/comment
 
 2
-//$ [ remove, test,] socket/accept/comment
 
 3
-//$ [ remove=1,test==2] socket/accept/comment
 
 4
-/*$ [ remove = false, test] socket/accept/comment */
-
-/*$ */
 
 5
-/*$ [ remove = true, test] socket/accept/comment */
-
-/*$ */
 
 6
 /*$ [ remove true, test] socket/accept/comment */
+/* accept
+ *
+ */
+/*$  */
 
+/*$ socket/accept@decl */
+;
+/*$  */
 
-/*$ */
-
-
+/*$ socket/accept@filter test_filter1,test_filter2.decl */
+ab;
+/*$  */

@@ -153,14 +153,23 @@ parse_a_file = (file_to_process)->
       else
         write_place_holder (spaces + create_long_start template_str)
         config.connector.read_db config,{spaces:spaces},path_list, (err,code)->        
+          db_object = code
           if err?
             console.log "$ERROR in "+file_to_process+":"+line_counter+": "+err
           else
             if tags_list? and _.isArray(tags_list) and tags_list.length
-              original_code = code
-              reduce_func=(code, tag)->
-                if tags.hasOwnProperty tag
-                  code= (tags[tag](code,path_list,original_code))
+              reduce_func=(code, tag)->                
+                func = tag.split ' '
+                tag_func= func.shift()
+                if func.length
+                  params= func.join().split ','
+                else
+                  params = []                                   
+                params.unshift code,path_list,db_object
+                if tags.hasOwnProperty tag_func
+                  code = tags[tag_func].apply(tags,params)
+                  [code,new_db_object] = code if _.isArray(code)
+                  db_object = new_db_object if new_db_object isnt undefined
                 else
                   console.log "$ERROR in "+file_to_process+":"+line_counter+": tag function("+tag+") not found."
                 code

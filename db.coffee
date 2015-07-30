@@ -34,8 +34,6 @@ module.exports =
         err="template doesn't exist."
     
     if (_.isObject val) and (!_.isArray val)
-      console.dir val
-      cb "template returned an object from the db"
-
+      cb err, val
     else
       cb err, (stringify val,context.spaces)

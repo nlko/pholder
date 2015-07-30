@@ -1,18 +1,30 @@
 {
-	"config":{
-	  "special_char":"$",
-	  "placeholder_short":"//",
-	  "placeholder_long1":"/*",
-	  "placeholder_long2":" */",
-	  "tagfile":"tag.coffee",
-	  "connector":"db.coffee"
-	},
-	"myclass":{
-		"mytemplate":"TEMPLATE 1",
-		"mytemplate2":"TEMPLATE 2",
-		"mytemplate3":["Line1","Line2"]
-	},
-	"myclass2":{
-		"mytemplate3":["Line1","Line2","Line3"]	
-	}
+    "config":{
+      "special_char":"$",
+      "placeholder_short":"//",
+      "placeholder_long1":"/*",
+      "placeholder_long2":" */",
+      "tagfile":"tag.coffee",
+      "connector":"db.coffee"
+    },
+    "myclass":{
+        "mytemplate":"TEMPLATE 1",
+        "mytemplate2":"TEMPLATE 2",
+        "mytemplate3":["Line1","Line2"]
+    },
+    "myclass2":{
+        "mytemplate3":["Line1","Line2","Line3","Line4"] 
+    },
+    "socket":{
+        "accept":{
+            "signature":"int accept(int)",
+            "comment":[
+                "/* accept",
+                " *", 
+                " */"
+            ],
+            "test_filter1":"a",
+            "test_filter2":"b"
+        }
+    }
 }
