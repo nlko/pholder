@@ -159,12 +159,14 @@ parse_a_file = (file_to_process)->
           else
             if tags_list? and _.isArray(tags_list) and tags_list.length
               reduce_func=(code, tag)->                
-                func = tag.split ' '
-                tag_func= func.shift()
-                if func.length
-                  params= func.join().split ','
+                index_param=tag.indexOf('(')
+                index_end = tag.lastIndexOf(')')
+                if (index_param is -1 ) or (index_end is -1)
+                  tag_func = tag.trim()
+                  params = []
                 else
-                  params = []                                   
+                  tag_func = (tag.substring 0,index_param).trim()
+                  params=((tag.substring (index_param+1),index_end).split ',').map (param)->param.trim()                   
                 params.unshift code,path_list,db_object
                 if tags.hasOwnProperty tag_func
                   code = tags[tag_func].apply(tags,params)
