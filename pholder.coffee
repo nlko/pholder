@@ -185,12 +185,12 @@ parse_a_file = (file_to_process)->
 
     process_found_template = (template_str)->
       # A temlate can be of the form this/is/a/path@and.a.list.of.tags
-      path_list = template_str.trim().split(config.tag_indicator)
+      path_list = template_str.trim().split(config.tag_indicator).map (elem)->elem.trim()
       if path_list.length is 1
         tags_list=[]
       else
         tags_str = path_list.pop()
-        tags_list =tags_str.trim().split(config.tag_separator)
+        tags_list =tags_str.trim().split(config.tag_separator).map (elem)->elem.trim()
 
       if path_list.length > 0
         path_part = path_list[0].trim()
@@ -218,7 +218,7 @@ parse_a_file = (file_to_process)->
           {}
 
         if flags isnt null
-          path_list = path_part.split(config.path_separator)
+          path_list = path_part.split(config.path_separator).map (elem)->elem.trim()
 
           write_template template_str, spaces, path_list, tags_list, flags
       else
