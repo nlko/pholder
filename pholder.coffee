@@ -53,16 +53,25 @@ prepare_filename_for_options = (filename) ->
 prepare_filename = (filename) ->
   path.resolve config_dir,filename
 
+requireJsonFile = (filename) ->
+  try
+    JSON.parse(fs.readFileSync(filename, 'utf8'));
+  catch e
+      console.log "$ERROR while reading #{filename}. Details follows"
+      console.log "#{e.message} at line #{e.lineNumber}:#{e.columnNumber}"
+      console.dir e
+      {}
+
 if argv.conf?
-  json = require(prepare_filename_for_options argv.conf)
+  json = requireJsonFile(prepare_filename_for_options argv.conf)
   config_dir = path.dirname(path.resolve argv.conf)
 else
   config_dir = path.dirname(process.cwd())
 
 if argv.data?
-  data = require(prepare_filename_for_options argv.data)
+  data = requireJsonFile(prepare_filename_for_options argv.data)
 else if json.config?.data_file?
-  data = require(prepare_filename json.config.data_file)
+  data = requireJsonFile(prepare_filename json.config.data_file)
 else
   data = json
 
