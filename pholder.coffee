@@ -7,22 +7,43 @@ process.on 'uncaughtException', (err) ->
 empty = ""
 
 argv = require 'optimist'
-      .usage 'Usage : $0 [--conf config.json] [--data datafile.json] [--clean] [--verbose] [--print] file1 file2…'
+      .usage 'Usage : $0 [--conf config.json] [--data datafile.json] [--clean] [--verbose] [--print] [--license] file1 file2…'
       .alias 'c','conf'
       .alias 'd','data'
+      .alias 'l','license'
       .describe 'c','Configuration file'
       .describe 'd','A Json datafile to act as a db. (db can be contained in the config file)'
       .describe 'clean','Remove placeholder values from files (leave empty placeholder).'      
       .describe 'print','Print result on the console'     
+      .describe 'license','Display the license'
       .describe 'verbose','Verbose mode' 
-      .boolean ['clean','print','verbose']
-      .check (argv)-> argv? and (argv?.c? or argv?.d?)
+      .boolean ['clean','print','verbose','license']
+      .check (argv)->argv? and (argv?.c or argv?.d or argv?.l)
       .argv
 
 fs = require('fs')
 path = require('path')
 
 _ = require('underscore')
+
+if argv.license
+  console.log " 
+    pholder - generic placeholder engine\n
+    Copyright (C) 2016  Nicolas THOMASSON (https://github.com/nlko)\n
+\n
+    This program is free software: you can redistribute it and/or modify\n
+    it under the terms of the GNU Affero General Public License as\n
+    published by the Free Software Foundation, either version 3 of the\n
+    License, or (at your option) any later version.\n
+\n
+    This program is distributed in the hope that it will be useful,\n
+    but WITHOUT ANY WARRANTY; without even the implied warranty of\n
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n
+    GNU Affero General Public License for more details.\n
+\n
+    You should have received a copy of the GNU Affero General Public License\n
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
+  return
 
 verbose=(str) -> console.log str if argv.verbose
 
