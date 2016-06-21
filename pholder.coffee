@@ -142,6 +142,11 @@ create_long_start = (template) -> long_start+" "+template.trim()+long_start_end
 
 
 parse_a_file = (file_to_process)->
+
+  if fs.lstatSync(file_to_process).isSymbolicLink()
+    console.log "WARNING: '"+file_to_process+"' is a symbolic link, skipping."
+    return
+
   verbose "processing #{file_to_process}"
 
   mode=0
