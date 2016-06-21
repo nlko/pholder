@@ -279,7 +279,7 @@ parse_a_file = (file_to_process)->
 
 
   if (mode is 1)
-    console.log "$ERROR in "+file_to_process+":"+line_counter+": File endding unexpectedly (missing closing tag)."
+    console.log "$ERROR in "+file_to_process+":"+line_counter+": File ending unexpectedly (missing closing tag)."
   else if isPrintRequested
     console.log output_buffer
   else
