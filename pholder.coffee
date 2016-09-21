@@ -13,10 +13,10 @@ argv = require 'optimist'
       .alias 'l','license'
       .describe 'c','Configuration file'
       .describe 'd','A Json datafile to act as a db. (db can be contained in the config file)'
-      .describe 'clean','Remove placeholder values from files (leave empty placeholder).'      
-      .describe 'print','Print result on the console'     
+      .describe 'clean','Remove placeholder values from files (leave empty placeholder).'
+      .describe 'print','Print result on the console'
       .describe 'license','Display the license'
-      .describe 'verbose','Verbose mode' 
+      .describe 'verbose','Verbose mode'
       .boolean ['clean','print','verbose','license']
       .check (argv)->argv? and (argv?.c or argv?.d or argv?.l)
       .argv
@@ -27,7 +27,7 @@ path = require('path')
 _ = require('underscore')
 
 if argv.license
-  console.log " 
+  console.log "
     pholder - generic placeholder engine\n
     Copyright (C) 2016  Nicolas THOMASSON (https://github.com/nlko)\n
 \n
@@ -66,7 +66,7 @@ else if json.config?.data_file?
 else
   data = json
 
-stringify = (data,spaces)->  
+stringify = (data,spaces)->
   if _.isArray(data)
     code=""
     data.forEach (elem)->
@@ -74,7 +74,7 @@ stringify = (data,spaces)->
         code+="\n"
       code+=spaces+elem
     code
-  else    
+  else
     spaces+data
 
 local_json_connector = {
@@ -149,7 +149,7 @@ parse_a_file = (file_to_process)->
   file_to_process = fs.realpathSync file_to_process
 
   mode=0
-  
+
   line_counter=0
 
   first_outputed_line = true
@@ -170,20 +170,18 @@ parse_a_file = (file_to_process)->
       output_buffer+=str
 
     write_template = (template_str, spaces, path_list, tags_list, flags) ->
-      #console.log line_counter
-      #console.dir flags
       write_place_holder = (str) -> add_to_output str if (!config.remove_place_holders? or !config.remove_place_holders) and !flags.remove?
       if isCleanRequested or flags.clean?
         write_place_holder (spaces + create_short_start template_str)
       else
         write_place_holder (spaces + create_long_start template_str)
-        config.connector.read_db config,{spaces:spaces},path_list, (err,code)->        
+        config.connector.read_db config,{spaces:spaces},path_list, (err,code)->
           db_object = code
           if err?
             console.log "$ERROR in "+file_to_process+":"+line_counter+": "+err
           else
             if tags_list? and _.isArray(tags_list) and tags_list.length
-              reduce_func=(code, tag)->                
+              reduce_func=(code, tag)->
                 index_param=tag.indexOf('(')
                 index_end = tag.lastIndexOf(')')
                 if (index_param is -1 ) or (index_end is -1)
@@ -191,7 +189,7 @@ parse_a_file = (file_to_process)->
                   params = []
                 else
                   tag_func = (tag.substring 0,index_param).trim()
-                  params=((tag.substring (index_param+1),index_end).split ',').map (param)->param.trim()                   
+                  params=((tag.substring (index_param+1),index_end).split ',').map (param)->param.trim()
                 params.unshift code,path_list,db_object
                 if tags.hasOwnProperty tag_func
                   code = tags[tag_func].apply(tags,params)
@@ -259,10 +257,10 @@ parse_a_file = (file_to_process)->
       else if line.startsWith long_start
         process_found_template (line.substring (long_start.length),(line.length-2))
         mode = 1
-      else        
+      else
         add_to_output original_line
     else
-      #if inside a template block, skip all the line until the end of block mark 
+      #if inside a template block, skip all the line until the end of block mark
       if line.startsWith long_start
         mode = 0
   #### /end of for each line
@@ -272,13 +270,13 @@ parse_a_file = (file_to_process)->
   finalise_file = (buffer) ->
     fs.writeFile file_to_process+".tmp", buffer, (err)->
       if err?
-        console.log "Failed to write", (file_to_process+".tmp")       
+        console.log "Failed to write", (file_to_process+".tmp")
         console.log err
       else
         fs.rename file_to_process+".tmp", file_to_process, (err)->
           if err?
             console.log "Failed to rename", (file_to_process+".tmp") , "to " , file_to_process
-            console.log err 
+            console.log err
 
 
 
@@ -291,7 +289,7 @@ parse_a_file = (file_to_process)->
 #### /parse_a_file
 
 # The list of files may be provided on the command line or from the configuration file
-files_to_process = 
+files_to_process =
   if config.input_files?
     (if _.isArray(config.input_files)
       config.input_files

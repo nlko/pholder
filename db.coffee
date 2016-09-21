@@ -2,7 +2,7 @@ local_data={}
 
 _ = require 'underscore'
 
-stringify = (data,spaces)->  
+stringify = (data,spaces)->
   if _.isArray(data)
     code=""
     data.forEach (elem)->
@@ -10,11 +10,11 @@ stringify = (data,spaces)->
         code+="\n"
       code+=spaces+elem
     code
-  else    
+  else
     spaces+data
 
-module.exports =  
-  init_db:(config, data)-> 
+module.exports =
+  init_db:(config, data)->
     local_data = data
 
   #read_db:(config, group, template, cb)->
@@ -32,7 +32,7 @@ module.exports =
         val=val[elem]
       else
         err="template doesn't exist."
-    
+
     if (_.isObject val) and (!_.isArray val)
       cb err, val
     else

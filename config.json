@@ -13,14 +13,14 @@
         "mytemplate3":["Line1","Line2"]
     },
     "myclass2":{
-        "mytemplate3":["Line1","Line2","Line3","Line4"] 
+        "mytemplate3":["Line1","Line2","Line3","Line4"]
     },
     "socket":{
         "accept":{
             "signature":"int accept(int)",
             "comment":[
                 "/* accept",
-                " *", 
+                " *",
                 " */"
             ],
             "test_filter1":"a",
