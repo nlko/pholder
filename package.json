@@ -1,4 +1,6 @@
 {
+    "name": "pholder",
+    "version": "0.0.1",
     "dependencies": {
         "optimist": "latest",
         "underscore": "latest"

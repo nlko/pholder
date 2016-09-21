@@ -1,4 +1,4 @@
-#!/usr/bin/coffee
+#!/usr/bin/env coffee
 
 process.on 'uncaughtException', (err) ->
   console.log('Caught exception: ')
@@ -142,6 +142,11 @@ create_long_start = (template) -> long_start+" "+template.trim()+long_start_end
 
 
 parse_a_file = (file_to_process)->
+
+  if fs.lstatSync(file_to_process).isSymbolicLink()
+    console.log "WARNING: '"+file_to_process+"' is a symbolic link, skipping."
+    return
+
   verbose "processing #{file_to_process}"
 
   mode=0
@@ -279,7 +284,7 @@ parse_a_file = (file_to_process)->
 
 
   if (mode is 1)
-    console.log "$ERROR in "+file_to_process+":"+line_counter+": File endding unexpectedly (missing closing tag)."
+    console.log "$ERROR in "+file_to_process+":"+line_counter+": File ending unexpectedly (missing closing tag)."
   else if isPrintRequested
     console.log output_buffer
   else
