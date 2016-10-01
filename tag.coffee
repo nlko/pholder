@@ -10,24 +10,30 @@ module.exports =
     # data value can be changed in the config.json file
 
     # str : previously processed (result of previous piped commmand or "")
-    # path : the object path
     # obj : the object in the db
-    # params : the list of parameters passed to the command
-    debug:(str,path,obj,param1,param2)->
+    # meta : a metadata object containing:
+    # * path : the object path
+    # * param : the array of parameters passed to the command
+    debug:(str,obj,meta)->
       console.dir str
-      console.dir path
       console.dir obj
+      console.dir meta
 
     #this command add a semicolon to a previously piped command or to the object
-    decl:(str,path,obj,param1,param2)->
+    decl:(str,obj,meta)->
       if str is ""
         obj+";"
-      else
+       else
         str+";"
 
     # this command trim the passed object.
-    trim:(str,path,obj)-> obj.trim()
+    trim:(str,obj)-> obj.trim()
 
     # this command concat the two fields of the passed object
-    filter:(str,path,obj,param1,param2)->
-        obj[param1]+obj[param2]
+    filter:(str,obj,meta)->
+        obj[meta.param[0]]+obj[meta.param[1]]
+
+    # indexed access to array object
+    at:(str,obj,meta)->
+        @debug str,obj,meta
+        obj[meta.param[0]]

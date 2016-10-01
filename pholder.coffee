@@ -190,18 +190,19 @@ parse_a_file = (file_to_process)->
             console.log "$ERROR in "+file_to_process+":"+line_counter+": "+err
           else
             if tags_list? and _.isArray(tags_list) and tags_list.length
+              meta=
+                path : path_list
               reduce_func=(code, tag)->
                 index_param=tag.indexOf('(')
                 index_end = tag.lastIndexOf(')')
                 if (index_param is -1 ) or (index_end is -1)
                   tag_func = tag.trim()
-                  params = []
+                  meta.param = []
                 else
                   tag_func = (tag.substring 0,index_param).trim()
-                  params=((tag.substring (index_param+1),index_end).split ',').map (param)->param.trim()
-                params.unshift code,path_list,db_object
+                  meta.param=((tag.substring (index_param+1),index_end).split ',').map (param)->param.trim()
                 if tags.hasOwnProperty tag_func
-                  code = tags[tag_func].apply(tags,params)
+                  code = tags[tag_func].apply(tags,[code,db_object,meta])
                   [code,new_db_object] = code if _.isArray(code)
                   db_object = new_db_object if new_db_object isnt undefined
                 else

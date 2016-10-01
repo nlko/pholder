@@ -31,3 +31,5 @@ This is a test
 //$ socket/accept/signature@decl
 
 //$ socket / accept @ filter ( test_filter1 , test_filter2 ) .  decl
+
+//$ myclass/mytemplate3@at(1)
