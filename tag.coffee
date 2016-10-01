@@ -13,6 +13,7 @@ module.exports =
     # obj : the object in the db
     # meta : a metadata object containing:
     # * path : the object path
+    # * indent : the indentation string (to prepend if needed)
     # * param : the array of parameters passed to the command
     debug:(str,obj,meta)->
       console.dir str
@@ -21,19 +22,19 @@ module.exports =
 
     #this command add a semicolon to a previously piped command or to the object
     decl:(str,obj,meta)->
-      if str is ""
-        obj+";"
-       else
-        str+";"
+      meta.indent+if str is ""
+                    obj+";"
+                   else
+                    str+";"
 
     # this command trim the passed object.
     trim:(str,obj)-> obj.trim()
 
     # this command concat the two fields of the passed object
     filter:(str,obj,meta)->
-        obj[meta.param[0]]+obj[meta.param[1]]
+        meta.indent+obj[meta.param[0]]+obj[meta.param[1]]
 
     # indexed access to array object
     at:(str,obj,meta)->
         @debug str,obj,meta
-        obj[meta.param[0]]
+        meta.indent+obj[meta.param[0]]

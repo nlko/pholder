@@ -192,6 +192,7 @@ parse_a_file = (file_to_process)->
             if tags_list? and _.isArray(tags_list) and tags_list.length
               meta=
                 path : path_list
+                indent : spaces
               reduce_func=(code, tag)->
                 index_param=tag.indexOf('(')
                 index_end = tag.lastIndexOf(')')
