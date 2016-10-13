@@ -31,7 +31,7 @@ module.exports =
       if val.hasOwnProperty elem
         val=val[elem]
       else
-        err="template doesn't exist."
+        err="template doesn't exist. (#{path_list})"
 
     if (_.isObject val) and (_.isArray val)
       cb err, val

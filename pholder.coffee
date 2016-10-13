@@ -96,7 +96,7 @@ local_json_connector = {
       if val.hasOwnProperty elem
         val=val[elem]
       else
-        err="template doesn't exist."
+        err="template doesn't existe. (#{path_list.join('/')})"
 
     cb err, (stringify val,context.spaces)
 
