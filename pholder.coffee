@@ -107,7 +107,7 @@ config =
   special_char:'$'
   placeholder_short:'//'
   placeholder_long1:'/*'
-  placeholder_long2:' */'
+  placeholder_long2:'*/'
   connector:local_json_connector
   tag_indicator:'@'
   tag_separator:'.'
