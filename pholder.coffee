@@ -91,7 +91,6 @@ local_json_connector = {
   read_db:(config, context, path_list, cb)->
     val=data
     err=null
-    console.dir path_list
     path_list.forEach (elem)->
       if val.hasOwnProperty elem
         val=val[elem]
@@ -130,6 +129,7 @@ if config?.tagfile?
   tags = require(prepare_filename config.tagfile)
 
 short_start=config.placeholder_short+config.special_char
+short_end = config.placeholder_short_end
 long_start=config.placeholder_long1+config.special_char
 long_start_end=config.placeholder_long2
 
@@ -145,6 +145,9 @@ extract_spaces = (str) ->
 
 String.prototype.startsWith = (prefix) ->
     @indexOf(prefix) is 0;
+
+String.prototype.endWith = (sufix) ->
+    @indexOf(sufix) + sufix.length is @length
 
 create_short_start = (template) -> short_start+" "+template.trim()
 create_long_start = (template) -> long_start+" "+template.trim()+long_start_end
@@ -165,6 +168,8 @@ parse_a_file = (file_to_process)->
 
   output_buffer=""
 
+  shortMatchWithEnding = false
+
   # for each line of the file
   fs.readFileSync(file_to_process).toString().split('\n').forEach (original_line)->
 
@@ -180,8 +185,14 @@ parse_a_file = (file_to_process)->
 
     write_template = (template_str, spaces, path_list, tags_list, flags) ->
       write_place_holder = (str) -> add_to_output str if (!config.remove_place_holders? or !config.remove_place_holders) and !flags.remove?
+
+      if shortMatchWithEnding
+        template_str = template_str.slice(0, -config.placeholder_short_end.length)
       if isCleanRequested or flags.clean?
-        write_place_holder (spaces + create_short_start template_str)
+        placeholder = spaces + create_short_start template_str
+        if shortMatchWithEnding
+          placeholder += config.placeholder_short_end
+        write_place_holder placeholder
       else
         write_place_holder (spaces + create_long_start template_str)
         config.connector.read_db config,{spaces:spaces},path_list, (err,code)->
@@ -263,10 +274,15 @@ parse_a_file = (file_to_process)->
 
     # if outside a template block
     if mode is 0
-      if line.startsWith short_start
+      startShort = line.startsWith short_start
+      if startShort and !config.placeholder_short_end?
         process_found_template (line.substring (short_start.length))
+      else if (config.placeholder_short_end? and startShort) and line.endWith config.placeholder_short_end
+        shortMatchWithEnding = true
+        process_found_template (line.substring (short_start.length))
+        shortMatchWithEnding = false
       else if line.startsWith long_start
-        process_found_template (line.substring (long_start.length),(line.length-2))
+        process_found_template (line.slice long_start.length,-long_start_end.length)
         mode = 1
       else
         add_to_output original_line
