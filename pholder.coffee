@@ -24,6 +24,8 @@ argv = require 'optimist'
 fs = require('fs')
 path = require('path')
 helper = require('./app/helper.js')
+logger = require('./app/logger.js')
+console.dir (new logger.logger(true))
 _ = require('underscore')
 
 if argv.license
@@ -45,9 +47,7 @@ if argv.license
     along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
   return
 
-
-logger =
-    verbose :(str) -> console.log str if argv.verbose
+logger = new logger.logger(argv.verbose)
 
 prepare_filename_for_options = (filename) ->
   path.resolve filename
