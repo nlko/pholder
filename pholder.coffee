@@ -23,7 +23,7 @@ argv = require 'optimist'
 
 fs = require('fs')
 path = require('path')
-
+helper = require('./app/helper.js')
 _ = require('underscore')
 
 if argv.license
@@ -75,17 +75,6 @@ else if json.config?.data_file?
 else
   data = json
 
-stringify = (data,spaces)->
-  if _.isArray(data)
-    code=""
-    data.forEach (elem)->
-      if(code isnt empty)
-        code+="\n"
-      code+=spaces+elem
-    code
-  else
-    spaces+data
-
 local_json_connector = {
   init_db:(config, data)->
   read_db:(config, context, path_list, cb)->
@@ -97,7 +86,7 @@ local_json_connector = {
       else
         err="template doesn't existe. (#{path_list.join('/')})"
 
-    cb err, (stringify val,context.spaces)
+    cb err, (helper.stringify val,context.spaces)
 
   close_db:->
 }
@@ -135,14 +124,6 @@ long_start_end=config.placeholder_long2
 
 config.connector.init_db config,data if config?.connector?.init_db
 
-extract_spaces = (str) ->
-  spaces=""
-  index=0
-  while (index < str.length) and (str.charAt(index) is ' ' or str.charAt(index) is '\t')
-    spaces+=str.charAt(index);
-    index++
-  spaces
-
 String.prototype.startsWith = (prefix) ->
     @indexOf(prefix) is 0;
 
@@ -175,7 +156,7 @@ parse_a_file = (file_to_process)->
 
     line_counter++
 
-    spaces = extract_spaces original_line
+    spaces = helper.extract_spaces original_line
     line = original_line.trim()
 
     add_to_output = (str) ->
