@@ -45,7 +45,9 @@ if argv.license
     along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
   return
 
-verbose=(str) -> console.log str if argv.verbose
+
+logger =
+    verbose :(str) -> console.log str if argv.verbose
 
 prepare_filename_for_options = (filename) ->
   path.resolve filename
@@ -134,9 +136,9 @@ create_short_start = (template) -> short_start+" "+template.trim()
 create_long_start = (template) -> long_start+" "+template.trim()+long_start_end
 
 
-parse_a_file = (file_to_process)->
+parse_a_file = (file_to_process,logger)->
 
-  verbose "processing #{file_to_process}"
+  logger.verbose "processing #{file_to_process}"
 
   # convert symbolic links to real path
   file_to_process = fs.realpathSync file_to_process
@@ -307,6 +309,6 @@ files_to_process =
     argv._
 
 #for each files from the command line or from the configuration
-files_to_process.forEach (file) ->  parse_a_file file
+files_to_process.forEach (file) ->  parse_a_file file,logger
 
 config.connector.close_db() if config.connector?init_db
