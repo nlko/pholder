@@ -25,7 +25,6 @@ fs = require('fs')
 path = require('path')
 helper = require('./app/helper.js')
 logger = require('./app/logger.js')
-console.dir (new logger.logger(true))
 _ = require('underscore')
 
 if argv.license
@@ -93,24 +92,18 @@ local_json_connector = {
   close_db:->
 }
 
-config =
-  special_char:'$'
-  placeholder_short:'//'
-  placeholder_long1:'/*'
-  placeholder_long2:'*/'
-  connector:local_json_connector
-  tag_indicator:'@'
-  tag_separator:'.'
-  path_separator:'/'
-
+config = require './app/config.js'
+config = new config.config(logger,'$','//','/*','*/',local_json_connector,'@','.','/')
 
 if(json?.config?)
-  _.extend config,json.config
+  config.extend(json.config)
 
 isCleanRequested = argv.clean or config.clean?
 
 isPrintRequested = argv.print or config.print?
 
+console.log 'cccc'
+console.dir(prepare_filename config.connector)
 if _.isString config.connector
   config.connector = require(prepare_filename config.connector)
 

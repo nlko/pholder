@@ -1,6 +1,6 @@
 let local_data={}
 
-import * as _ from '../node_modules/lodash'
+import * as _ from './node_modules/lodash'
 
 import * as helper from './helper'
 
